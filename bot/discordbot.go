@@ -41,32 +41,24 @@ func ConectarADiscord(token string) {
 		}
 
 		if strings.HasPrefix(m.Content, "precio") {
-			params := strings.Fields(m.Content)[1:] // Extraer solo los tickers
+			params := "tickers/" + strings.ToUpper(strings.Fields(m.Content)[1]) // Extraer solo los tickers
 
-			params2 := "tickers/" + strings.ToUpper(m.Content[7:])
-
-			// Verificamos si hay parámetros, si no, respondemos pidiendo los parámetros
-			if len(params) == 0 {
-				s.ChannelMessageSend(m.ChannelID, "Por favor, ingresa los parámetros después de mervaleta")
+			if checkparametros(params, s, m.ChannelID) {
 				return
 			}
 
-			sendToAPI(params2, s, m.ChannelID)
+			sendToAPI(params, s, m.ChannelID)
 
 		}
 
 		if strings.HasPrefix(m.Content, "proyeccion") {
-			params := strings.Fields(m.Content)[1:] // Extraer solo los tickers
+			params := "tickers/" + strings.ToUpper(strings.Fields(m.Content)[1]) // Extraer solo los tickers
 
-			params2 := "tickers/data/" + strings.ToUpper(m.Content[11:])
-			fmt.Print(params2)
-			// Verificamos si hay parámetros, si no, respondemos pidiendo los parámetros
-			if len(params) == 0 {
-				s.ChannelMessageSend(m.ChannelID, "Por favor, ingresa los parámetros después de mervaleta")
+			if checkparametros(params, s, m.ChannelID) {
 				return
 			}
 
-			sendToAPI(params2, s, m.ChannelID)
+			sendToAPI(params, s, m.ChannelID)
 
 		}
 
@@ -132,4 +124,12 @@ func handleAPIResponse(s *discordgo.Session, response string, channelID string) 
 	} else {
 		log.Println("Mensaje enviado con éxito al canal", channelID)
 	}
+}
+
+func checkparametros(params string, s *discordgo.Session, channelID string) bool {
+	if len(params) == 0 {
+		s.ChannelMessageSend(channelID, "Por favor, ingresa los tickers")
+		return true
+	}
+	return false
 }
