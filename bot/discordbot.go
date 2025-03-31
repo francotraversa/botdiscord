@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"os/signal"
 	"strings"
 	"syscall"
@@ -25,8 +24,7 @@ type ApiResponse struct {
 	Tickers []Ticker `json:"tickers"`
 }
 
-func ConectarADiscord() {
-	token := ""
+func ConectarADiscord(token string) {
 
 	sess, err := discordgo.New("Bot " + token)
 
@@ -38,76 +36,39 @@ func ConectarADiscord() {
 		if m.Author.ID == s.State.User.ID {
 			return
 		}
-
-		if strings.HasPrefix(m.Content, "./mervaleta/predict") {
-			params := strings.Fields(m.Content)[1:]
-			ticker := params[0]
-			periodo := params[1]
-			intervalo := params[2]
-			cmd := exec.Command("python3", "python/ml.py", ticker, periodo, intervalo)
-			output, err := cmd.CombinedOutput()
-			if err != nil {
-				fmt.Println("Error ejecutando Python:", err)
-				return
-			}
-
-			outputText := string(output)
-			lines := strings.Split(outputText, "\n")
-			handleAPIResponse(s, ("Fecha           | Apertura |  Alto      |  Bajo    |  Cierre   | Volumen"), m.ChannelID)
-
-			for _, line := range lines {
-				// Ignorar mensajes de TensorFlow que comienzan con la fecha y "I tensorflow"
-				if strings.Contains(line, "I tensorflow") || strings.Contains(line, "oneDNN") || strings.Contains(line, "cpu_feature_guard") {
-					continue
-				}
-
-				// Filtrar solo fechas válidas o el "Proximo Precio"
-				if strings.HasPrefix(line, "2025-") || strings.Contains(line, "Proximo Precio: ") {
-					handleAPIResponse(s, line, m.ChannelID)
-				}
-			}
-
+		if strings.HasPrefix(m.Content, "mervaleta") {
+			s.ChannelMessageSend(m.ChannelID, "Si Senor!")
 		}
 
-		if strings.HasPrefix(m.Content, "./mervaleta/tickers/") {
-			// Extraemos los parámetros después de "/.mervaleta"
-			params := strings.Fields(m.Content)[1:]
+		if strings.HasPrefix(m.Content, "precio") {
+			params := strings.Fields(m.Content)[1:] // Extraer solo los tickers
+
+			params2 := "tickers/" + strings.ToUpper(m.Content[7:])
 
 			// Verificamos si hay parámetros, si no, respondemos pidiendo los parámetros
 			if len(params) == 0 {
-				s.ChannelMessageSend(m.ChannelID, "Por favor, ingresa los parámetros después de /.mervaleta")
+				s.ChannelMessageSend(m.ChannelID, "Por favor, ingresa los parámetros después de mervaleta")
 				return
 			}
 
-			sendToAPI(params, s, m.ChannelID)
+			sendToAPI(params2, s, m.ChannelID)
 
 		}
 
-		/*if strings.HasPrefix(m.Content, "./mervaleta/data/") {
-			// Extraemos los parámetros después de "/.mervaleta"
-			params := strings.Fields(m.Content)[1:]
-			ticker := params[0]
-			paramss := params[1]
+		if strings.HasPrefix(m.Content, "proyeccion") {
+			params := strings.Fields(m.Content)[1:] // Extraer solo los tickers
 
+			params2 := "tickers/data/" + strings.ToUpper(m.Content[11:])
+			fmt.Print(params2)
 			// Verificamos si hay parámetros, si no, respondemos pidiendo los parámetros
 			if len(params) == 0 {
-				s.ChannelMessageSend(m.ChannelID, "Por favor, ingresa los parámetros después de /.mervaleta")
+				s.ChannelMessageSend(m.ChannelID, "Por favor, ingresa los parámetros después de mervaleta")
 				return
-			}
-			cmd := exec.Command("python3", "python/activation.py", ticker, paramss)
-			output, err := cmd.CombinedOutput()
-			if err != nil {
-				fmt.Println("Error ejecutando Python:", err)
-				return
-			}
-			outputText := string(output)
-			fmt.Print(outputText)
-			lines := strings.Split(outputText, "\n")
-			for _, line := range lines {
-				handleAPIResponse(s, line, m.ChannelID)
 			}
 
-		}*/
+			sendToAPI(params2, s, m.ChannelID)
+
+		}
 
 	})
 
@@ -127,9 +88,9 @@ func ConectarADiscord() {
 	<-sc
 }
 
-func sendToAPI(params []string, s *discordgo.Session, channelID string) {
-	baseURL := "http://192.168.1.188:5001/tickers/"
-	query := params[0]
+func sendToAPI(params string, s *discordgo.Session, channelID string) {
+	baseURL := "http://192.168.1.188:5001/"
+	query := params
 	url := baseURL + query
 
 	// Hacer la solicitud GET
