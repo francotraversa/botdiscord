@@ -26,7 +26,7 @@ type ApiResponse struct {
 }
 
 func ConectarADiscord() {
-	token := "MTM0NjE4ODEwMzc4MTQ1MzkxNw.GFuKI2.Fljl5-wNn-JDrI8zuKgkLNLCRwVxIEdO7XfQxA"
+	token := ""
 
 	sess, err := discordgo.New("Bot " + token)
 
