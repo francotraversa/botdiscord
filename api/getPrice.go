@@ -37,7 +37,7 @@ func GetPriceFromAPI(tickers string, s *discordgo.Session, channelID string) {
 
 	if len(apiResponse.Tickers) > 0 {
 		for _, ticker := range apiResponse.Tickers {
-			discord.HandleAPIResponse(s, fmt.Sprintf("Ticker: %s | Precio: $%.2f", ticker.TickerName, ticker.CurrentPrice), channelID)
+			discord.HandleAPIResponse(s, fmt.Sprintf("**Ticker:** %s | **Precio:** $%.2f", ticker.TickerName, ticker.CurrentPrice), channelID)
 		}
 	} else {
 		discord.HandleAPIResponse(s, "No se encontraron tickers en la respuesta de la API.", channelID)

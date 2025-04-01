@@ -44,7 +44,8 @@ func GetIndicatorsFromAPI(ticker string, s *discordgo.Session, channelID string)
 	indicators = strings.ReplaceAll(indicators, "types.Indicators{", "")
 	indicators = strings.ReplaceAll(indicators, "}", "")
 
-	discord.HandleAPIResponse(s, fmt.Sprintf("Ticker: %s\nPrecio: $%.2f\nDecision: %s",
+	discord.HandleAPIResponse(s, fmt.Sprintf("**Ticker:** %s\n**Precio:** $%.2f\n**Decisión:** %s",
 		apiResponse.Ticker, apiResponse.Close, apiResponse.Decision), channelID)
-	discord.HandleAPIResponse(s, fmt.Sprintf("Data:\n%s", indicators), channelID)
+	discord.HandleAPIResponse(s, fmt.Sprintf("**Data:**\n%s", indicators), channelID)
+	discord.HandleAPIResponse(s, fmt.Sprintf("**Puntaje final:** %.2f", apiResponse.Score), channelID)
 }
