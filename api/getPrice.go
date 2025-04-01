@@ -12,9 +12,9 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func GetPriceFromAPI(ticker string, s *discordgo.Session, channelID string) {
-	baseURL := "http://localhost:5001/tickers"
-	url := baseURL + ticker
+func GetPriceFromAPI(tickers string, s *discordgo.Session, channelID string) {
+	baseURL := "http://localhost:5001/tickers/"
+	url := baseURL + tickers
 
 	resp, err := http.Get(url)
 	if err != nil {
@@ -29,7 +29,7 @@ func GetPriceFromAPI(ticker string, s *discordgo.Session, channelID string) {
 	err = json.Unmarshal(body, &apiResponse)
 	if err != nil {
 		log.Println("Error al transcribir el JSON:", err)
-		discord.HandleAPIResponse(s, "NO anduvo.", channelID)
+		discord.HandleAPIResponse(s, "No se encontraron tickers en la respuesta de la API.", channelID)
 		return
 	}
 

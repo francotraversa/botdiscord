@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -29,14 +30,19 @@ func GetIndicatorsFromAPI(ticker string, s *discordgo.Session, channelID string)
 	err = json.Unmarshal(body, &apiResponse)
 	if err != nil {
 		log.Println("Error al transcribir el JSON:", err)
-		discord.HandleAPIResponse(s, "NO anduvo.", channelID)
+		discord.HandleAPIResponse(s, "No se encontraron tickers en la respuesta de la API.", channelID)
+
 		return
 	}
 
-	if apiResponse.Ticker != "" {
-		discord.HandleAPIResponse(s, fmt.Sprintf("Ticker: %s\nPrecio: $%.2f\nDecision: %s",
-			apiResponse.Ticker, apiResponse.Close, apiResponse.Decision), channelID)
-	} else {
-		discord.HandleAPIResponse(s, "No se encontraron tickers en la respuesta de la API.", channelID)
-	}
+	indicators := fmt.Sprintf("%#v", apiResponse.Indicators)
+
+	indicators = strings.ReplaceAll(indicators, ", ", "\n")
+	indicators = strings.ReplaceAll(indicators, ":", ": ")
+	indicators = strings.ReplaceAll(indicators, "types.Indicators{", "")
+	indicators = strings.ReplaceAll(indicators, "}", "")
+
+	discord.HandleAPIResponse(s, fmt.Sprintf("Ticker: %s\nPrecio: $%.2f\nDecision: %s",
+		apiResponse.Ticker, apiResponse.Close, apiResponse.Decision), channelID)
+	discord.HandleAPIResponse(s, fmt.Sprintf("Data:\n%s", indicators), channelID)
 }
