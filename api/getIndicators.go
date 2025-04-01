@@ -2,6 +2,7 @@ package api
 
 import (
 	"botdiscord/discord"
+	"botdiscord/environment"
 	"botdiscord/types"
 	"encoding/json"
 	"fmt"
@@ -14,8 +15,9 @@ import (
 )
 
 func GetIndicatorsFromAPI(ticker string, s *discordgo.Session, channelID string) {
-	baseURL := "http://localhost:5001/tickers/data/"
-	url := baseURL + ticker
+	endpoint := "/tickers/data/"
+	baseUrl := environment.GetEnv().BaseURL
+	url := baseUrl + endpoint + ticker
 
 	resp, err := http.Get(url)
 	if err != nil {

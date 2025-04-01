@@ -13,7 +13,8 @@ type IEnvProvider interface {
 type EnvProvider struct{}
 
 type EnvironmentData struct {
-	Token string
+	Token   string
+	BaseURL string
 }
 
 var env = EnvironmentData{}
@@ -28,6 +29,7 @@ func LoadDotEnv(provider IEnvProvider) error {
 
 func InitializeEnvVariables(provider IEnvProvider) {
 	env.Token = provider.GetEnv("token")
+	env.BaseURL = provider.GetEnv("baseUrl")
 }
 
 func (p EnvProvider) Load(filenames ...string) (err error) {

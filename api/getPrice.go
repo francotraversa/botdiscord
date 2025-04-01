@@ -2,6 +2,7 @@ package api
 
 import (
 	"botdiscord/discord"
+	"botdiscord/environment"
 	"botdiscord/types"
 	"encoding/json"
 	"fmt"
@@ -13,8 +14,9 @@ import (
 )
 
 func GetPriceFromAPI(tickers string, s *discordgo.Session, channelID string) {
-	baseURL := "http://localhost:5001/tickers/"
-	url := baseURL + tickers
+	endpoint := "tickers/"
+	baseUrl := environment.GetEnv().BaseURL
+	url := baseUrl + endpoint + tickers
 
 	resp, err := http.Get(url)
 	if err != nil {
