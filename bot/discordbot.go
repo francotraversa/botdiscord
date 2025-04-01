@@ -1,11 +1,9 @@
 package bot
 
 import (
-	"encoding/json" // Asegúrate de importar este paquete
+	"botdiscord/api"
 	"fmt"
-	"io"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"strings"
@@ -14,18 +12,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-type Ticker struct {
-	CurrentPrice float64 `json:"current_price"`
-	TickerName   string  `json:"ticker_name"`
-}
-
-// Estructura que contiene los tickers (respuesta completa de la API)
-type ApiResponse struct {
-	Tickers []Ticker `json:"tickers"`
-}
-
 func ConectarADiscord(token string) {
-
 	sess, err := discordgo.New("Bot " + token)
 
 	if err != nil {
@@ -41,27 +28,25 @@ func ConectarADiscord(token string) {
 		}
 
 		if strings.HasPrefix(m.Content, "precio") {
-			params := "tickers/" + strings.ToUpper(strings.Fields(m.Content)[1]) // Extraer solo los tickers
+			params := strings.ToUpper(strings.Fields(m.Content)[1]) // Extraer solo los tickers
 
 			if checkparametros(params, s, m.ChannelID) {
 				return
 			}
 
-			sendToAPI(params, s, m.ChannelID)
+			api.GetPriceFromAPI(params, s, m.ChannelID)
 
 		}
 
-		if strings.HasPrefix(m.Content, "proyeccion") {
-			params := "tickers/" + strings.ToUpper(strings.Fields(m.Content)[1]) // Extraer solo los tickers
+		if strings.HasPrefix(m.Content, "datos") {
+			params := strings.ToUpper(strings.Fields(m.Content)[1]) // Extraer solo los tickers
 
 			if checkparametros(params, s, m.ChannelID) {
 				return
 			}
 
-			sendToAPI(params, s, m.ChannelID)
-
+			api.GetIndicatorsFromAPI(params, s, m.ChannelID)
 		}
-
 	})
 
 	//permisos del botardo
@@ -78,52 +63,6 @@ func ConectarADiscord(token string) {
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-sc
-}
-
-func sendToAPI(params string, s *discordgo.Session, channelID string) {
-	baseURL := "http://192.168.1.188:5001/"
-	query := params
-	url := baseURL + query
-
-	// Hacer la solicitud GET
-	resp, err := http.Get(url)
-	if err != nil {
-		fmt.Println("Error en la solicitud:", err)
-		return
-	}
-	defer resp.Body.Close()
-
-	body, _ := io.ReadAll(resp.Body)
-
-	var apiResponse ApiResponse
-	err = json.Unmarshal(body, &apiResponse)
-	if err != nil {
-		log.Println("Error al transcribir el JSON:", err)
-		handleAPIResponse(s, "NO anduvo.", channelID)
-		return
-	}
-
-	if len(apiResponse.Tickers) > 0 {
-		// Formatear y enviar los datos de la API
-		for _, ticker := range apiResponse.Tickers {
-			handleAPIResponse(s, fmt.Sprintf("Ticker: %s | Precio: %.2f", ticker.TickerName, ticker.CurrentPrice), channelID)
-		}
-	} else {
-		handleAPIResponse(s, "No se encontraron tickers en la respuesta de la API.", channelID)
-	}
-}
-
-func handleAPIResponse(s *discordgo.Session, response string, channelID string) {
-	// Formatear el mensaje con la respuesta de la API
-	message := response
-
-	// Intentar enviar el mensaje al canal de Discord
-	_, err := s.ChannelMessageSend(channelID, message)
-	if err != nil {
-		log.Printf("Error al enviar el mensaje al canal %s: %v", channelID, err)
-	} else {
-		log.Println("Mensaje enviado con éxito al canal", channelID)
-	}
 }
 
 func checkparametros(params string, s *discordgo.Session, channelID string) bool {
