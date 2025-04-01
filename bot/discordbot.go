@@ -49,7 +49,6 @@ func ConectarADiscord(token string) {
 		}
 	})
 
-	//permisos del botardo
 	sess.Identify.Intents = discordgo.IntentsAllWithoutPrivileged
 
 	err = sess.Open()
