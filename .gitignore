@@ -1,3 +1,4 @@
 .env
 tmp
 __debug*
+node_modules
