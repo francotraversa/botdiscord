@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./output.css" rel="stylesheet">
+    <title>Reporte - {{ticker}} {{date}}</title>
+</head>
+
+<body class="m-4">
+    <div>
+        <div class="flex justify-between">
+            <div class="flex flex-col justify-start">
+                <span class="text-4xl text-blue-950 font-bold">SAPISTOCK</span>
+                <span class="text-sm text-blue-950">Financial Reports</span>
+            </div>
+            <div class="flex flex-col justify-end text-end">
+                <span class="text-4xl black font-bold">MERVALETA</span>
+                <span class="text-sm black">Discord bot</span>
+            </div>
+        </div>
+        <div class="border border-blue-950/60 mt-2"></div>
+        <div class="flex justify-between mt-2">
+            <span class="text-sm black">{{day}}</span>
+            <span class="text-sm black">{{date}}</span>
+        </div>
+        <div class="mt-4 text-blue-950">
+            <span class="text-4xl font-bold">{{ticker}} <span class="text-2xl">{{market}}</span></span>
+            <div class="flex flex-row justify-between mt-4 h-full w-full">
+                <div class="w-2/3 flex flex-col">
+                    <div class="flex flex-col mt-4">
+                        <span>Último mes</span>
+                        <div class="border-2 rounded-2xl border-blue-950 w-full h-48 mt-2"></div>
+                    </div>
+                    <div class="flex flex-col mt-4">
+                        <span>Últimos 12 meses</span>
+                        <div class="border-2 rounded-2xl border-blue-950 w-full h-48 mt-2"></div>
+                    </div>
+                    <div class="flex flex-col mt-4">
+                        <span>Datos técnicos</span>
+                        <div class="grid grid-cols-2 gap-2 mt-2">
+                            <span class="font-bold">SMA50: <span class="font-light">{{sma50}}</span></span>
+                            <span class="font-bold">SMA200: <span class="font-light">{{sma200}}</span></span>
+                            <span class="font-bold">RSI: <span class="font-light">{{rsi}}</span></span>
+                            <span class="font-bold">EMA50: <span class="font-light">{{ema50}}</span></span>
+                            <span class="font-bold">EMA200: <span class="font-light">{{ema200}}</span></span>
+                            <span class="font-bold">BB M: <span class="font-light">{{bbm}}</span></span>
+                            <span class="font-bold">BB H: <span class="font-light">{{bbh}}</span></span>
+                            <span class="font-bold">BB L: <span class="font-light">{{bbl}}</span></span>
+                            <span class="font-bold">MACD: <span class="font-light">{{macd}}</span></span>
+                            <span class="font-bold">MACD S: <span class="font-light">{{macds}}</span></span>
+                            <span class="font-bold">MACD D: <span class="font-light">{{macdd}}</span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="border min-h-96 border-blue-950/60 mx-4">
+                </div>
+                <div class="w-1/3 flex flex-col">
+                    <div class="flex flex-col mt-4">
+                        <span>Precio actual</span>
+                        <span class="text-4xl font-bold">{{price}}</span>
+                    </div>
+                    <div class="flex flex-col mt-4">
+                        <span>Volúmen última semana</span>
+                        <span class="text-4xl font-bold">{{volume}}</span>
+                    </div>
+                    <div class="flex flex-col mt-4">
+                        <span>Operado última semana</span>
+                        <span class="text-4xl font-bold">{{operated}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
