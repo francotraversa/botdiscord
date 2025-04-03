@@ -2,6 +2,7 @@ package bot
 
 import (
 	"botdiscord/api"
+	//"botdiscord/pipi"
 	"fmt"
 	"log"
 	"os"
@@ -25,6 +26,12 @@ func ConectarADiscord(token string) {
 		}
 		if strings.HasPrefix(m.Content, "mervaleta") {
 			s.ChannelMessageSend(m.ChannelID, "Si Senor!")
+		}
+		if strings.HasPrefix(m.Content, "OFF") {
+			s.ChannelMessageSend(m.ChannelID, "Hasta Manana!")
+			//pipi.Execute("OFF")
+			os.Exit(0)
+
 		}
 
 		if strings.HasPrefix(m.Content, "precio") {

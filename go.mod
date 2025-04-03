@@ -11,3 +11,5 @@ require (
 	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394
 	golang.org/x/sys v0.0.0-20201119102817-f84b799fce68 // indirect
 )
+
+require github.com/jung-kurt/gofpdf v1.16.2 // indirect
